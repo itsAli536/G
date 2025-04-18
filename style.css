@@ -1,0 +1,376 @@
+:root {
+    --background-color-start: #121212; /* Darker background start */
+    --background-color-end: #1e1e1e;   /* Slightly lighter background end */
+    --text-color: #eee;
+    --primary-color: #00c6ff; /* Cyan-like blue */
+    --secondary-color: #0072ff; /* Deeper blue */
+    --accent-color: #25D366; /* WhatsApp Green */
+    --card-background: rgba(255, 255, 255, 0.05);
+    --glow-color: rgba(0, 198, 255, 0.7); /* Adjusted glow color */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Apply gradient background */
+    background: linear-gradient(180deg, var(--background-color-start), var(--background-color-end));
+    color: var(--text-color);
+    line-height: 1.6;
+    overscroll-behavior: none; /* Prevent browser overscroll effects */
+    overflow-x: hidden;
+    min-height: 100vh; /* Ensure gradient covers full height */
+    position: relative; /* Needed for pseudo-element */
+}
+
+/* Optional: Subtle noise texture overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.02"/></svg>');
+    z-index: -2; /* Behind particles */
+    pointer-events: none;
+}
+
+#webgl-canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1; /* Behind everything */
+    pointer-events: none; /* Allow clicks through */
+}
+
+#webgl-canvas-container canvas {
+    display: block; /* Remove extra space below canvas */
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+h1, h2, h3 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Hero Section */
+#hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative; /* Needed for absolute positioning of scroll indicator */
+    padding: 0 20px;
+    padding-bottom: 100px; /* Add padding to push scroll indicator down */
+    overflow: hidden; /* Hide overflowing elements if any */
+}
+
+.hero-content {
+    /* Animation handled by JS */
+    opacity: 0;
+    transform: translateY(30px);
+    margin-bottom: 60px; /* Increased spacing between text and scroll indicator */
+}
+
+.portfolio-title {
+    font-size: clamp(3rem, 10vw, 6rem); /* Slightly larger base size */
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff; /* Clean white color */
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: clamp(1.1rem, 3.5vw, 1.8rem); /* Slightly larger subtitle */
+    font-weight: 300;
+    color: #bbb;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    animation: fadeInScroll 1s 2s ease-in-out forwards; /* Fade in after hero text */
+}
+
+.scroll-indicator svg {
+    margin-bottom: 8px;
+}
+
+.scroll-indicator .scroller {
+    animation: scrollUpDown 1.5s ease-in-out infinite;
+}
+
+.scroll-indicator span {
+    font-size: 0.8rem;
+    color: #aaa;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@keyframes scrollUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+@keyframes fadeInScroll {
+    to { opacity: 1; }
+}
+
+/* Main Content Area */
+main {
+    position: relative; /* Ensure content appears above fixed background */
+    z-index: 1;
+    /* Remove background color to let body gradient show through */
+    padding-top: 50px; /* Space below hero */
+}
+
+section {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* About Section */
+#about {
+    text-align: center;
+}
+
+.about-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-picture-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 2rem auto;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+    padding: 5px;
+    box-shadow: 0 10px 30px rgba(0, 198, 255, 0.2), 0 0 0 5px rgba(255, 255, 255, 0.1);
+    transform: perspective(500px) translateZ(0); /* Prepare for 3D effect */
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.profile-picture-container:hover {
+     transform: perspective(500px) translateZ(20px) rotateY(5deg);
+     box-shadow: 0 15px 40px rgba(0, 198, 255, 0.3), 0 0 0 7px rgba(255, 255, 255, 0.15);
+}
+
+.profile-placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover; /* In case you use an img tag later */
+}
+
+#about h2 {
+    color: var(--primary-color);
+}
+
+/* Gallery Section */
+#gallery {
+    padding-bottom: 100px; /* Space for reveal animation */
+}
+
+.gallery-title {
+     text-align: center;
+     margin-bottom: 3rem;
+     color: var(--primary-color);
+}
+
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+}
+
+/* Desktop: 5 columns */
+@media (min-width: 1200px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+/* Tablet: 3 columns */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+/* Mobile: 2 columns */
+@media (min-width: 480px) and (max-width: 767px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(2, 1fr);
+         gap: 20px;
+    }
+}
+/* Small Mobile: 1 column */
+@media (max-width: 479px) {
+    .thumbnail-grid {
+        grid-template-columns: 1fr;
+         gap: 20px;
+    }
+}
+
+.thumbnail-item {
+    aspect-ratio: 16 / 9; /* Standard thumbnail ratio */
+    perspective: 1000px; /* Enable 3D transforms for children */
+}
+
+.thumbnail-content {
+    width: 100%;
+    height: 100%;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #ccc;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-style: preserve-3d; /* Needed for 3D effect */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+.thumbnail-item:hover .thumbnail-content {
+    transform: translateZ(30px) rotateX(5deg) rotateY(-5deg) scale(1.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), /* Darker hover shadow */
+                0 0 15px var(--glow-color), /* More subtle glow */
+                0 0 5px var(--text-color); /* Inner white hint */
+}
+
+/* Reveal Animation (for ScrollTrigger) */
+.reveal {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(50px) scale(0.95);
+    transition: opacity 0.8s cubic-bezier(0.5, 0, 0, 1),
+                transform 0.8s cubic-bezier(0.5, 0, 0, 1),
+                visibility 0.8s;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* WhatsApp Floating Icon */
+#whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 0 var(--glow-color); /* Initial shadow for pulse */
+    z-index: 100;
+    transition: transform 0.3s ease-out;
+    animation: pulse 2s infinite, bounceIn 1s ease-out forwards;
+    opacity: 0; /* Initially hidden for bounceIn */
+}
+
+#whatsapp-float:hover {
+    transform: scale(1.1) rotate(-10deg);
+    animation-play-state: paused; /* Pause pulse on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow-color);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 0 var(--glow-color);
+    }
+    70% {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+@keyframes bounceIn {
+     0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(50px);
+    }
+    60% {
+         opacity: 1;
+        transform: scale(1.1) translateY(-10px);
+    }
+    80% {
+        transform: scale(0.95) translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    section {
+        padding: 60px 15px;
+    }
+     #whatsapp-float {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+    }
+     #whatsapp-float svg {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+/* Larger Screen Adjustments */
+@media (min-width: 1400px) {
+     .portfolio-title {
+        font-size: 7rem; /* Even larger on very wide screens */
+     }
+    .subtitle {
+        font-size: 2rem;
+    }
+    section {
+        padding: 100px 40px; /* More padding */
+    }
+}
